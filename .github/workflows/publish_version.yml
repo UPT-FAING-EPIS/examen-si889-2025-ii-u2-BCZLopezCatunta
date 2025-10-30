@@ -1,4 +1,4 @@
-name: Publish Version and Release
+name: 🚀 Publish Version and Release
 
 on:
   push:
@@ -7,115 +7,132 @@ on:
 
 jobs:
   compile:
-    name: Compilar aplicación
+    name: 🔨 1. Compilar aplicación
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout código
+    - name: 📥 Checkout del código
       uses: actions/checkout@v4
       
-    - name: Configurar Java
+    - name: ☕ Configurar Java 17
       uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
+        cache: 'maven'
         
-    - name: Compilar aplicación con Maven
+    - name: 🏗️ Compilar aplicación
       run: |
-        echo "Compilando la aplicación con Maven..."
-        mvn compile -B
-        echo "Compilación completada"
+        echo "=== COMPILANDO APLICACIÓN ==="
+        mvn clean compile -B
+        echo "✅ Compilación EXITOSA"
 
   unit-tests:
-    name: Ejecutar tests unitarios
+    name: 🧪 2. Ejecutar tests unitarios
     runs-on: ubuntu-latest
     needs: compile
     
     steps:
-    - name: Checkout código
+    - name: 📥 Checkout del código
       uses: actions/checkout@v4
       
-    - name: Configurar Java
+    - name: ☕ Configurar Java 17
       uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
+        cache: 'maven'
         
-    - name: Ejecutar tests unitarios con Maven
+    - name: 🧪 Ejecutar tests
       run: |
-        echo "Ejecutando tests unitarios..."
+        echo "=== EJECUTANDO TESTS UNITARIOS ==="
         mvn test -B
-        echo "Tests unitarios completados"
+        echo "✅ Tests unitarios COMPLETADOS"
 
   test-coverage:
-    name: Reporte de cobertura de tests
+    name: 📊 3. Reporte de cobertura
     runs-on: ubuntu-latest
     needs: unit-tests
     
     steps:
-    - name: Checkout código
+    - name: 📥 Checkout del código
       uses: actions/checkout@v4
       
-    - name: Configurar Java
+    - name: ☕ Configurar Java 17
       uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
+        cache: 'maven'
         
-    - name: Generar reporte de cobertura con JaCoCo
+    - name: 📈 Generar reporte de cobertura
       run: |
-        echo "Generando reporte de cobertura..."
-        mvn test jacoco:report -B
-        echo "Reporte de cobertura generado"
+        echo "=== GENERANDO REPORTE DE COBERTURA ==="
+        mvn clean test jacoco:report -B
+        echo "✅ Reporte de cobertura GENERADO"
         
-    - name: Configurar GitHub Pages
-      uses: actions/configure-pages@v4
-      
-    - name: Subir artifact para GitHub Pages
+    - name: 📁 Verificar archivos generados
+      run: |
+        echo "=== ARCHIVOS DE COBERTURA ==="
+        ls -la target/site/jacoco/
+        
+    - name: 🚀 Subir para GitHub Pages
       uses: actions/upload-pages-artifact@v3
       with:
-        path: ./target/site
+        path: target/site/jacoco/
 
   deploy-to-pages:
-    name: Publicar en GitHub Pages
+    name: 🌐 4. Publicar en GitHub Pages
     runs-on: ubuntu-latest
     needs: test-coverage
     permissions:
       pages: write
       id-token: write
+      contents: read
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     
     steps:
-    - name: Desplegar en GitHub Pages
+    - name: 🚀 Desplegar en GitHub Pages
       id: deployment
       uses: actions/deploy-pages@v4
 
   create-release:
-    name: Crear Release
+    name: 🏷️ 5. Publicar Release
     runs-on: ubuntu-latest
     needs: [compile, unit-tests, test-coverage]
     
     steps:
-    - name: Checkout código
+    - name: 📥 Checkout del código
       uses: actions/checkout@v4
       
-    - name: Crear Release
-      uses: actions/create-release@v1
+    - name: 🏷️ Crear Release
+      uses: softprops/action-gh-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
+        tag_name: ${{ github.ref_name }}
+        name: "Release v${{ github.ref_name }}"
         draft: false
         prerelease: false
+        generate_release_notes: true
         body: |
-          Release automático generado por GitHub Actions
+          ## 🎉 Release Automático Examen SI889
           
-          Incluye:
-          - Compilación de la aplicación
-          - Tests unitarios ejecutados
-          - Reporte de cobertura generado
+          **Estudiante:** BCZLopezCatunta
+          **Fecha:** ${{ github.event.head_commit.timestamp }}
           
-          Fecha: ${{ github.event.head_commit.timestamp }}
+          ### ✅ Procesos Completados:
+          
+          1. 🔨 **Compilación** - Código compilado exitosamente
+          2. 🧪 **Tests Unitarios** - Todos los tests ejecutados y pasados
+          3. 📊 **Cobertura de Código** - Reporte JaCoCo generado
+          4. 🌐 **GitHub Pages** - Reporte publicado online
+          5. 🏷️ **Release** - Versión publicada automáticamente
+          
+          ### 📈 Reporte de Cobertura:
+          Disponible en: https://upt-faing-epis.github.io/examen-si889-2025-ii-u2-BCZLopezCatunta/
+          
+          ---
+          *Automáticamente generado por GitHub Actions CI/CD*
