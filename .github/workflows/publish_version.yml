@@ -73,13 +73,13 @@ jobs:
         
     - name: 📁 Verificar archivos generados
       run: |
-        echo "=== ARCHIVOS DE COBERTURA ==="
-        ls -la target/site/jacoco/
+        echo "=== ARCHIVOS GENERADOS ==="
+        ls -la target/site/
         
     - name: 🚀 Subir para GitHub Pages
       uses: actions/upload-pages-artifact@v3
       with:
-        path: target/site/jacoco/
+        path: target/site/
 
   deploy-to-pages:
     name: 🌐 4. Publicar en GitHub Pages
@@ -117,22 +117,3 @@ jobs:
         draft: false
         prerelease: false
         generate_release_notes: true
-        body: |
-          ## 🎉 Release Automático Examen SI889
-          
-          **Estudiante:** BCZLopezCatunta
-          **Fecha:** ${{ github.event.head_commit.timestamp }}
-          
-          ### ✅ Procesos Completados:
-          
-          1. 🔨 **Compilación** - Código compilado exitosamente
-          2. 🧪 **Tests Unitarios** - Todos los tests ejecutados y pasados
-          3. 📊 **Cobertura de Código** - Reporte JaCoCo generado
-          4. 🌐 **GitHub Pages** - Reporte publicado online
-          5. 🏷️ **Release** - Versión publicada automáticamente
-          
-          ### 📈 Reporte de Cobertura:
-          Disponible en: https://upt-faing-epis.github.io/examen-si889-2025-ii-u2-BCZLopezCatunta/
-          
-          ---
-          *Automáticamente generado por GitHub Actions CI/CD*
